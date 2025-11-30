@@ -1,0 +1,198 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Birthday Surprise 🎁</title>
+    <link rel="stylesheet" href="style.css"/>
+    </head>
+    <body>
+
+    <!-- ================= HERO / CARD SECTION ================= -->
+    <section class="hero" id="top">
+
+        <!-- 3D CARD -->
+        <div class="card3d" id="card">
+        <div class="card3d-inner">
+
+            <!-- FRONT -->
+            <div class="card-face card-front">
+            <div class="front-badge">HAPPY BIRTHDAY</div>
+
+            <div class="front-balloons">
+                <span class="bal b1"></span>
+                <span class="bal b2"></span>
+                <span class="bal b3"></span>
+                <span class="bal b4"></span>
+            </div>
+
+            <div class="front-footer">Hover to open ✨</div>
+            </div>
+
+            <!-- INSIDE -->
+            <div class="card-face card-inside">
+            <div class="inside-paper">
+                <h2>To missus old 👵🏻</h2>
+
+                <p id="typedText" class="typed-text"></p>
+                <span id="typedCursor" class="cursor">|</span>
+
+                <p class="inside-small">From: anak bm</p>
+            </div>
+            </div>
+
+        </div>
+        </div>
+
+        <a class="scroll-down" href="#gift">Scroll down ↓</a>
+    </section>
+
+
+    <!-- ================= GIFT / COUNTDOWN SECTION ================= -->
+    <section class="gift-section" id="gift">
+        <h2 class="gift-title">Your present 🎁</h2>
+        <p class="gift-sub">Countdown to unlock:</p>
+
+        <div class="present">
+
+        <div class="lid"></div>
+        <div class="ribbon-vert"></div>
+        <div class="ribbon-horz"></div>
+
+        <!-- COUNTDOWN OVERLAY -->
+        <div class="countdown-panel" id="countdownPanel">
+            <p class="unlock-at" id="unlockAtText"></p>
+
+            <div class="countdown-grid">
+            <div class="time">
+                <div class="num" id="days">0</div>
+                <div class="label">Days</div>
+            </div>
+            <div class="time">
+                <div class="num" id="hours">00</div>
+                <div class="label">Hours</div>
+            </div>
+            <div class="time">
+                <div class="num" id="minutes">00</div>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="time">
+                <div class="num" id="seconds">00</div>
+                <div class="label">Seconds</div>
+            </div>
+            </div>
+
+            <div class="locked-text" id="lockedText">🔒 Locked</div>
+        </div>
+
+        <!-- UNLOCKED CONTENT -->
+        <div class="surprise hidden" id="surprise">
+            <h3>Surprise!</h3>
+            <p>
+            Click the button ive prepared for your gift
+            </p>
+
+            <a class="btn" href="https://example.com" target="_blank" rel="noreferrer">
+            Open Your Gift
+            </a>
+        </div>
+
+        </div>
+    </section>
+
+
+    <!-- ================= INLINE JS ONLY ================= -->
+    <script>
+        /* -----------------------------
+        CARD HOVER TYPING
+        ------------------------------ */
+        const card = document.getElementById("card");
+        const typedTextEl = document.getElementById("typedText");
+        const cursorEl = document.getElementById("typedCursor");
+
+        const message = "Happy 18th birthday to you, wishing the best for all of your UKK projects and hoping the best for your internship experience i really hope and wish you well there 😂🙏";
+        let typingInterval = null;
+        let index = 0;
+        let hasTypedOnce = false;
+
+        function startTyping() {
+        if (typingInterval || hasTypedOnce) return;
+        cursorEl.style.opacity = "1";
+        typingInterval = setInterval(() => {
+            typedTextEl.textContent += message[index];
+            index++;
+            if (index >= message.length) {
+            clearInterval(typingInterval);
+            typingInterval = null;
+            hasTypedOnce = true;
+            cursorEl.style.opacity = "0";
+            }
+        }, 55);
+        }
+
+        card.addEventListener("mouseenter", startTyping);
+
+
+        /* -----------------------------
+        COUNTDOWN + UNLOCK
+        (Dec 1 at 00:00)
+        ------------------------------ */
+        const UNLOCK_AT = new Date("2025-12-01T00:00:00");
+
+        const unlockAtText = document.getElementById("unlockAtText");
+        const countdownPanel = document.getElementById("countdownPanel");
+        const surpriseEl = document.getElementById("surprise");
+
+        const daysEl = document.getElementById("days");
+        const hoursEl = document.getElementById("hours");
+        const minutesEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
+        const lockedText = document.getElementById("lockedText");
+
+        const STORAGE_KEY = "birthday_unlock_once_v1";
+
+        function pad(n){ return String(n).padStart(2, "0"); }
+
+        function unlockGift(){
+        countdownPanel.classList.add("hidden");
+        surpriseEl.classList.remove("hidden");
+        localStorage.setItem(STORAGE_KEY, "true");
+        }
+
+        function tick(){
+        const now = new Date();
+
+        if (localStorage.getItem(STORAGE_KEY) === "true") {
+            unlockGift();
+            return;
+        }
+
+        const diff = UNLOCK_AT - now;
+
+        if (diff <= 0){
+            unlockGift();
+            return;
+        }
+
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600*24)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        daysEl.textContent = days;
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+        secondsEl.textContent = pad(seconds);
+
+        lockedText.textContent = "🔒 Locked";
+        }
+
+        unlockAtText.textContent = "Unlocks on: " + UNLOCK_AT.toLocaleString();
+
+        tick();
+        setInterval(tick, 1000);
+    </script>
+
+    </body>
+    </html>
